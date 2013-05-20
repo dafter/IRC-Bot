@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Sends the user's IP to the channel.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Matej Velikonja <matej@velikonja.si>
  */
@@ -16,7 +16,7 @@ class Ip extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!ip';
-    
+
     /**
      * Sends the arguments to the channel.
      * An IP.
@@ -25,7 +25,7 @@ class Ip extends \Library\IRC\Command\Base {
      */
     public function command() {
         $ip = $this->getUserIp();
-        
+
         if ( $ip ) {
             $this->say( 'Your IP is: ' . $ip );
         } else {

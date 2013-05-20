@@ -6,7 +6,7 @@ namespace Command;
  * Leave IRC altogether.
  * This disconnects from the server.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Daniel Siepmann <coding.layne@me.com>
  */
@@ -23,7 +23,7 @@ class Quit extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * Leave IRC altogether.
      * This disconnects from the server.

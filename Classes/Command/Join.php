@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Joins the specified channel.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Super3 <admin@wildphp.com>
  */
@@ -16,7 +16,7 @@ class Join extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!join {[#channel],<password>} {[#channel],<password>} etc';
-    
+
     /**
      * The number of arguments the command needs.
      *
@@ -29,7 +29,7 @@ class Join extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * Joins the specified channel.
      *

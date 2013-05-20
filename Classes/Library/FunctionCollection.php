@@ -11,7 +11,7 @@
  *
  * @license    http://creativecommons.org/licenses/by/3.0/
  *
- * @package WildBot
+ * @package Wildbot
  * @subpackage Library
  * @author Daniel Siepmann <coding.layne@me.com>
  *
@@ -22,12 +22,12 @@ namespace Library;
 /**
  * Description of FunctionCollection
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Library
  * @author Daniel Siepmann <Daniel.Siepmann@wfp2.com>
  */
 class FunctionCollection {
-    
+
     /**
      * Removes line breaks from a string.
      *

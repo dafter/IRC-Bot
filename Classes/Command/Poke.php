@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Sends the arguments to the channel, like say from a user.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Super3 <admin@wildphp.com>
  */
@@ -18,7 +18,7 @@ class Poke extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!poke [#channel] [user] OR !poke [user]';
-    
+
     /**
      * The number of arguments the command needs.
      *
@@ -27,7 +27,7 @@ class Poke extends \Library\IRC\Command\Base {
      * @var integer
      */
     protected $maxArgs = 2;
-    
+
     /**
      * Sends the arguments to the channel, like say from a user.
      *

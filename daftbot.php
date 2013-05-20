@@ -1,6 +1,6 @@
 <?php
 /**
- * WildBot
+ * Dafbot
  *
  * LICENSE: This source file is subject to Creative Commons Attribution
  * 3.0 License that is available through the world-wide-web at the following URI:
@@ -10,7 +10,7 @@
  *
  * @license http://creativecommons.org/licenses/by/3.0/
  *
- * @package WildBot
+ * @package Wildbot
  * @author Hoshang Sadiq <superaktieboy@gmail.com>
  */
 
@@ -21,5 +21,5 @@ define( 'PE', PHP_EOL );
 
 set_include_path( ROOT_DIR . DS . 'Classes' . DS );
 
-require 'WildBot.php';
-WildBot::init();
+require 'Daftbot.php';
+Daftbot::init();

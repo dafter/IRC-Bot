@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Sends the arguments to the channel, like say from a user.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Daniel Siepmann <coding.layne@me.com>
  */
@@ -18,7 +18,7 @@ class Say extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!say [#channel|username] whatever you want to say';
-    
+
     /**
      * The number of arguments the command needs.
      *
@@ -31,7 +31,7 @@ class Say extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * Sends the arguments to the channel, like say from a user.
      *

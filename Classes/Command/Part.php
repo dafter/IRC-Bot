@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Parts the specified channel.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Super3 <admin@wildphp.com>
  */
@@ -16,7 +16,7 @@ class Part extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!part [#channel]';
-    
+
     /**
      * The number of arguments the command needs.
      *
@@ -31,7 +31,7 @@ class Part extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * Parts the specified channel.
      *

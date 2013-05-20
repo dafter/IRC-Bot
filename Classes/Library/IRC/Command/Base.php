@@ -9,7 +9,7 @@
  *
  * @license http://creativecommons.org/licenses/by/3.0/
  *
- * @package WildBot
+ * @package Wildbot
  * @subpackage Library
  * @author Daniel Siepmann <coding.layne@me.com>
  *
@@ -20,7 +20,7 @@ namespace Library\IRC\Command;
 /**
  * An IRC command.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Library
  * @author Daniel Siepmann <daniel.siepmann@me.com>
  */
@@ -33,7 +33,7 @@ abstract class Base extends \Library\IRC\Base {
      * @var integer
      */
     protected $numberOfArguments = 0;
-    
+
     /**
      * The help string, shown to the user if he calls the command with wrong
      * parameters.
@@ -57,7 +57,7 @@ abstract class Base extends \Library\IRC\Base {
     public function requiresAdmin() {
         return $this->requireAdmin;
     }
-    
+
     /**
      * Executes the command.
      *
@@ -78,7 +78,7 @@ abstract class Base extends \Library\IRC\Base {
             $this->command();
         }
     }
-    
+
     /**
      * Get the help string
      *
@@ -87,7 +87,7 @@ abstract class Base extends \Library\IRC\Base {
     private function getHelp() {
         return $this->help;
     }
-    
+
     /**
      * Returns requesting user IP
      *
@@ -105,7 +105,7 @@ abstract class Base extends \Library\IRC\Base {
         }
         return null;
     }
-    
+
     /**
      * Overwrite this method for your needs.
      * This method is called if the command get's executed.

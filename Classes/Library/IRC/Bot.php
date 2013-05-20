@@ -21,63 +21,71 @@ namespace Library\IRC;
 /**
  * A simple IRC Bot with basic features.
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Library
- *            
+ *
  * @author Super3 <admin@wildphp.com>
  * @author Daniel Siepmann <coding.layne@me.com>
+ * @author Tristan van Bokkem <tristanvanbokkem@gmail.com>
  */
 class Bot {
-    
+
     /**
      * Holds the server connection.
      *
      * @var \Library\IRC\Connection
      */
     private $connection = null;
-    
+
     /**
      * serverPassword
      *
      * @var string
      */
     private $serverPassword = '';
-    
+
     /**
      * adminPassword
      *
      * @var string
      */
     private $adminPassword = '';
-    
+
     /**
      * A list of all channels the bot should connect to.
      *
      * @var array
      */
     private $channel = array ();
-    
+
     /**
      * The name of the bot.
      *
      * @var string
      */
     private $name = '';
-    
+
     /**
      * The nick of the bot.
      *
      * @var string
      */
     private $nick = '';
-    
+
+    /**
+     * The password of the bot.
+     *
+     * @var string
+     */
+    private $password = '';
+
     /**
      * The number of reconnects before the bot stops running.
      *
      * @var integer
      */
     private $maxReconnects = 0;
-    
+
     /**
      * Complete file path to the log file.
      * Configure the path, the filename is generated and added.
@@ -85,42 +93,42 @@ class Bot {
      * @var string
      */
     private $logFile = '';
-    
+
     /**
      * The nick of the bot.
      *
      * @var string
      */
     private $nickToUse = '';
-    
+
     /**
      * Defines the prefix for all commands interacting with the bot.
      *
      * @var String
      */
     private $commandPrefix = '!';
-    
+
     /**
      * All of the messages both server and client
      *
      * @var array
      */
     private $ex = array ();
-    
+
     /**
      * The nick counter, used to generate a available nick.
      *
      * @var integer
      */
     private $nickCounter = 0;
-    
+
     /**
      * Contains the number of reconnects.
      *
      * @var integer
      */
     private $numberOfReconnects = 0;
-    
+
     /**
      * All available commands.
      * Commands are type of IRCCommand
@@ -128,7 +136,7 @@ class Bot {
      * @var array
      */
     private $commands = array ();
-    
+
     /**
      * All available listeners.
      * Listeners are type of IRCListener
@@ -136,7 +144,7 @@ class Bot {
      * @var array
      */
     private $listeners = array ();
-    
+
     /**
      * All admins will be stored here
      *
@@ -156,9 +164,9 @@ class Bot {
             'Serialise End' => 'successfully serialised!',
             'Serialise End Fail' => 'didn\'t serialise!',
             'Remember End' => 'successfully remebered all it can!',
-            'Remember End Fail' => 'could not remember anything!' 
+            'Remember End Fail' => 'could not remember anything!'
     );
-    
+
     /**
      * Creates a new IRC Bot.
      *
@@ -170,7 +178,7 @@ class Bot {
     public function __construct( ) {
         $this->connection = new \Library\IRC\Connection\Socket();
     }
-    
+
     /**
      * Cleanup handlers.
      */
@@ -179,7 +187,7 @@ class Bot {
             fclose( $this->logFileHandler );
         }
     }
-    
+
     /**
      * Connects the bot to the server.
      *
@@ -190,29 +198,34 @@ class Bot {
         if ( empty( $this->nickToUse ) ) {
             $this->nickToUse = $this->nick;
         }
-        
+
+        if (empty( $this->passwordToUse )) {
+            $this->passwordToUse = $this->password;
+        }
+
         if ( $this->connection->isConnected() ) {
             $this->connection->disconnect();
         }
-        
+
         $this->log( 'The following commands are known by the bot: "' . implode( ',', array_keys( $this->commands ) ) . '".', 'INFO' );
         $this->log( 'The following listeners are known by the bot: "' . implode( ',', array_keys( $this->listeners ) ) . '".', 'INFO' );
-        
+
         $this->connection->connect();
         $this->sendDataToServer( 'PASS ' . $this->serverPassword );
         $this->sendDataToServer( 'NICK ' . $this->nickToUse );
-        $this->sendDataToServer( 'USER ' . $this->nickToUse . ' Layne-Obserdia.de ' . $this->nickToUse . ' :' . $this->name );
-        
+        $this->sendDataToServer( 'USER ' . $this->nickToUse . ' daftpool.com ' . $this->nickToUse . ' :' . $this->name );
+        $this->sendDataToServer( 'PRIVMSG NickServ :IDENTIFY ' . $this->passwordToUse );
+
         // Create Socket for Slave Process - NOT YET IMPLEMENTED BUT HERE NONE-THE-LESS //
         $botSocket = socket_create(AF_UNIX, SOCK_STREAM, 0);
         $socketBind = socket_bind($botSocket, "/tmp/bot.socket");
         socket_listen($botSocket);
         //////////////////////////////////////////////////////////////////////////////////
 
-        
+
         $this->main();
     }
-    
+
     /**
      * This is the workhorse function, grabs the data from the server and
      * displays on the browser
@@ -230,7 +243,7 @@ class Bot {
             // Get the response from irc:
             $args = explode( ' ', $data );
             $this->log( $data );
-            
+
             if ( stripos( $data, 'PRIVMSG' ) === false ) {
                 // Check for some special situations and react:
                 if ( stripos( $data, 'Nickname is already in use.' ) !== false ) {
@@ -240,12 +253,12 @@ class Bot {
                     $this->nick = $this->nickToUse;
                     $this->sendDataToServer( 'NICK ' . $this->nickToUse );
                 }
-                
+
                 // We're welcome. Let's join the configured channel/-s.
                 if ( stripos( $data, 'End of /MOTD command' ) !== false ) {
                     $this->join_channel( $this->channel );
                 }
-                
+
                 // Something realy went wrong.
                 if ( stripos( $data, 'Registration Timeout' ) !== false || stripos( $data, 'Erroneous Nickname' ) !== false || stripos( $data, 'Closing Link' ) !== false ) {
                     // If the error occurs to often, create a log entry and
@@ -254,7 +267,7 @@ class Bot {
                         $this->log( 'Closing Link after "' . $this->numberOfReconnects . '" reconnects.', 'EXIT' );
                         exit();
                     }
-                    
+
                     // Notice the error.
                     $this->log( $data, 'CONNECTION LOST' );
                     // Wait before reconnect ...
@@ -306,7 +319,7 @@ class Bot {
                     }
                 }
             }
-            
+
             if ( isset( $args[3] ) ) {
                 // Explode the server response and get the command.
                 // $source finds the channel or user that the command
@@ -322,14 +335,14 @@ class Bot {
                         $this->log( 'The following commands are known by the bot: "' . implode( ',', array_keys( $this->commands ) ) . '".', 'MISSING' );
                         continue;
                     }
-                    
+
                     $this->executeCommand( $command, $args );
                     unset( $args );
                 }
             }
         } while ( true );
     }
-    
+
     /**
      * Adds a single command to the bot.
      *
@@ -360,40 +373,40 @@ class Bot {
         $this->listeners[$listenerName] = $listener;
         $this->log( 'The following Listener was added to the Bot: "' . $listenerName . '".', 'INFO' );
     }
-    
+
     /**
      * Returns class name of $object without namespace
      *
-     * @param mixed $object            
+     * @param mixed $object
      * @author Matej Velikonja <matej@velikonja.si>
      * @return string
      */
     private function getClassName( $object ) {
         $objectName = explode( '\\', get_class( $object ) );
         $objectName = $objectName[count( $objectName ) - 1];
-        
+
         return $objectName;
     }
-    
+
     /**
      * Displays stuff to the broswer and sends data to the server.
      *
      * @param string $cmd
      *            The command to execute.
-     *            
+     *
      * @author Daniel Siepmann <coding.layne@me.com>
      */
     public function sendDataToServer( $cmd ) {
         $this->log( $cmd, 'COMMAND' );
         $this->connection->sendData( $cmd );
     }
-    
+
     /**
      * Joins one or multiple channel/-s.
      *
      * @param mixed $channel
      *            An string or an array containing the name/-s of the channel.
-     *            
+     *
      * @author Super3 <admin@wildphp.com>
      */
     private function join_channel( $channel, $key = '' ) {
@@ -405,7 +418,7 @@ class Bot {
             $this->sendDataToServer( 'JOIN ' . $channel . ' ' . $key );
         }
     }
-    
+
     /**
      * Adds a log entry to the log file.
      *
@@ -413,25 +426,25 @@ class Bot {
      *            The log entry to add.
      * @param string $status
      *            The status, used to prefix the log entry.
-     *            
+     *
      * @author Daniel Siepmann <coding.layne@me.com>
      */
     public function log( $log, $status = '' ) {
         if ( empty( $status ) ) {
             $status = 'LOG';
         }
-        
+
         $msg = date( 'd.m.Y - H:i:s' ) . "\t  [ " . $status . " ] \t" . \Library\FunctionCollection::removeLineBreaks( $log ) . "\r\n";
-        
+
         echo $msg;
-        
+
         if ( !is_null( $this->logFileHandler ) ) {
             fwrite( $this->logFileHandler, $msg );
         }
     }
 
     // Setters
-    
+
     /**
      * Sets the whole configuration.
      *
@@ -440,18 +453,19 @@ class Bot {
      * @author Daniel Siepmann <coding.layne@me.com>
      */
     public function configure() {
-        $this->setServer( \WildBot::get('config')->server );
-        $this->setServerPassword( \WildBot::get('config')->serverPassword );
-        $this->setAdminPassword( \WildBot::get('config')->adminPassword );
-        $this->setCommandPrefix( \WildBot::get('config')->commandPrefix );
-        $this->setPort( \WildBot::get('config')->port );
-        $this->setChannel( \WildBot::get('config')->channels );
-        $this->setName( \WildBot::get('config')->name );
-        $this->setNick( \WildBot::get('config')->nick );
-        $this->setMaxReconnects( \WildBot::get('config')->max_reconnects );
-        $this->setLogFile( \WildBot::get('config')->log_file );
+        $this->setServer( \Daftbot::get('config')->server );
+        $this->setServerPassword( \Daftbot::get('config')->serverPassword );
+        $this->setAdminPassword( \Daftbot::get('config')->adminPassword );
+        $this->setCommandPrefix( \Daftbot::get('config')->commandPrefix );
+        $this->setPort( \Daftbot::get('config')->port );
+        $this->setChannel( \Daftbot::get('config')->channels );
+        $this->setName( \Daftbot::get('config')->name );
+        $this->setNick( \Daftbot::get('config')->nick );
+        $this->setPassword( \Daftbot::get('config')->password );
+        $this->setMaxReconnects( \Daftbot::get('config')->max_reconnects );
+        $this->setLogFile( \Daftbot::get('config')->log_file );
     }
-    
+
     /**
      * Sets the server.
      * E.g. irc.quakenet.org or irc.freenode.org
@@ -462,7 +476,7 @@ class Bot {
     public function setServer( $server ) {
         $this->connection->setServer( $server );
     }
-    
+
     /**
      * Sets the server password for connecting to the server.
      *
@@ -472,7 +486,7 @@ class Bot {
     public function setServerPassword( $password ) {
         $this->serverPassword = $password;
     }
-    
+
     /**
      * Sets the admin password for connecting to the server.
      *
@@ -481,7 +495,7 @@ class Bot {
     public function setAdminPassword( $password ) {
         $this->adminPassword = $password;
     }
-    
+
     /**
      * Sets the port.
      * E.g. 6667
@@ -492,7 +506,7 @@ class Bot {
     public function setPort( $port ) {
         $this->connection->setPort( $port );
     }
-    
+
     /**
      * Sets the channel.
      * E.g. '#testchannel' or array('#testchannel','#helloWorldChannel')
@@ -503,7 +517,7 @@ class Bot {
     public function setChannel( $channel ) {
         $this->channel = (array) $channel;
     }
-    
+
     /**
      * Sets the name of the bot.
      * "Yes give me a name!"
@@ -514,7 +528,7 @@ class Bot {
     public function setName( $name ) {
         $this->name = (string) $name;
     }
-    
+
     /**
      * Sets the nick of the bot.
      * "Yes give me a nick too. I love nicks."
@@ -525,7 +539,17 @@ class Bot {
     public function setNick( $nick ) {
         $this->nick = (string) $nick;
     }
-    
+
+    /**
+     * Sets the password of the bot.
+     *
+     * @param string $password
+     *            The password of the bot.
+     */
+    public function setPassword( $password ) {
+        $this->password = (string) $password;
+    }
+
     /**
      * Set a user as an admin
      *
@@ -541,7 +565,7 @@ class Bot {
         }
         return $this;
     }
-    
+
     public function adminChange($user, $newnick) {
         if(isset($this->admins[(string) $user])) {
             $newuser = trim($newnick).substr($user, strpos($user, '!'));
@@ -562,7 +586,7 @@ class Bot {
     public function getAdmins( $user = null ) {
         return $user == null ? $this->admins : (isset($this->admins[$user]) ? $this->admins[$user] : false);
     }
-    
+
     /**
      * Sets the limit of reconnects, before the bot exits.
      *
@@ -572,13 +596,13 @@ class Bot {
     public function setMaxReconnects( $maxReconnects ) {
         $this->maxReconnects = (int) $maxReconnects;
     }
-    
+
     /**
      * Sets the filepath to the log.
      * Specify the folder and a prefix.
-     * E.g. /Users/yourname/logs/wildbot- That will result in a logfile like the
+     * E.g. /Users/yourname/logs/daftbot- That will result in a logfile like the
      * following:
-     * /Users/yourname/logs/wildbot-11-12-2012.log
+     * /Users/yourname/logs/daftbot-11-12-2012.log
      *
      * @param string $logFile
      *            The filepath and prefix for a logfile.
@@ -594,7 +618,7 @@ class Bot {
             $this->logFileHandler = fopen( $this->logFile, 'w+' );
         }
     }
-    
+
     /**
      * Allows plug-ins to serliase to files, if they don't have a serialise
      * method then they won't serialise.
@@ -604,7 +628,7 @@ class Bot {
     public function serialise() {
         $this->serialRemMain( "serialise" );
     }
-    
+
     /**
      * Allows plug-ins to remember data, if they don't have a remember method
      * then they won't try to load anything.
@@ -614,7 +638,7 @@ class Bot {
     public function remember() {
         $this->serialRemMain( "remember" );
     }
-    
+
     /**
      * Performs serialisation or remembering across all listeners and commands
      * if they have implemented this.
@@ -626,7 +650,7 @@ class Bot {
     private function serialRemMain( $serialOrRem ) {
         foreach ( $this->listeners as $listener )
             $this->serialRemLoop( $serialOrRem, self::$listenerString, $listener );
-        
+
         foreach ( $this->commands as $command )
             $this->serialRemLoop( $serialOrRem, self::$commandString, $command );
     }
@@ -660,7 +684,7 @@ class Bot {
      * Returns a specific requested command.
      * Please inspect \Library\IRC\Bot::$commands to find out the name
      *
-     * @param string $commands            
+     * @param string $commands
      * @return \Library\IRC\Command\Base
      */
     public function getCommand( $command ) {
@@ -696,13 +720,21 @@ class Bot {
     }
 
     /**
+     * get the password of the bot
+     * @return string
+     */
+    public function getPassword() {
+        return $this->password;
+    }
+
+    /**
      * get the connection
      * @return \Library\IRC\Connection
      */
     public function getConnection() {
         return $this->connection;
     }
-    
+
     /**
      * Return a list of loaded listeners
      *
@@ -716,7 +748,7 @@ class Bot {
      * Returns a specific requested listener.
      * Please inspect \Library\IRC\Bot::$listeners to find out the name
      *
-     * @param string $listener            
+     * @param string $listener
      * @return \Library\IRC\Listener\Base
      */
     public function getListener( $listener ) {

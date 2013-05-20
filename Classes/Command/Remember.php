@@ -5,7 +5,7 @@ namespace Command;
 /**
  * Makes the bot read from files
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Jack Blower <Jack@elvenspellmaker.co.uk>
  */
@@ -22,7 +22,7 @@ class Remember extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * Sends the arguments to the channel, like say from a user.
      *
@@ -30,10 +30,10 @@ class Remember extends \Library\IRC\Command\Base {
      */
     public function command() {
         $this->bot->remember();
-        
+
         preg_match( '/(.+)!/', $this->privSource, $queryUser );
         $queryUser = $queryUser[1];
-        
+
         $this->say( $queryUser . ': I\'ve finished remembering now!~ ^-^' );
     }
 }

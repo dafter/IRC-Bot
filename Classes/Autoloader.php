@@ -10,7 +10,7 @@
  *
  * @license http://creativecommons.org/licenses/by/3.0/
  *
- * @package WildBot
+ * @package Wildbot
  * @author Daniel Siepmann <coding.layne@me.com>
  *
  * @filesource
@@ -19,7 +19,7 @@
 /**
  * A minimum autoloader
  *
- * @package WildBot
+ * @package Daftbot
  * @author Daniel Siepmann <coding.layne@me.com>
  */
 class Autoloader {

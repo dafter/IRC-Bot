@@ -5,7 +5,7 @@ namespace Command;
 /**
  * The bot disconnects for the specified number of seconds
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Command
  * @author Super3 <admin@wildphp.com>
  */
@@ -17,7 +17,7 @@ class Timeout extends \Library\IRC\Command\Base {
      * @var string
      */
     protected $help = '!timeout [seconds]';
-    
+
     /**
      * The number of arguments the command needs.
      *
@@ -32,7 +32,7 @@ class Timeout extends \Library\IRC\Command\Base {
      * @var boolean
      */
     protected $requireAdmin = true;
-    
+
     /**
      * The bot disconnects for the specified number of seconds.
      */

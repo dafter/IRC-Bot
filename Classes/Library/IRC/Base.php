@@ -9,7 +9,7 @@
  *
  * @license http://creativecommons.org/licenses/by/3.0/
  *
- * @package WildBot
+ * @package Wildbot
  * @subpackage Library
  * @author Hoshang Sadiq <superaktieboy@gmail.com>
  *
@@ -21,85 +21,85 @@ namespace Library\IRC;
  * A base class for the Command and Listener base to prevent code repetition.
  * The functions were written by Daniel Siepmann, they were just moved around
  *
- * @package WildBot
+ * @package Daftbot
  * @subpackage Library
  * @author Hoshang Sadiq <superaktieboy@gmail.com>
  */
 abstract class Base {
     /**
      * Reference to the IRC Connection.
-     * 
+     *
      * @var \Library\IRC\Connection
      */
     protected $connection = null;
-    
+
     /**
      * Reference to the IRC Bot
-     * 
+     *
      * @var \Lirary\IRC\Bot
      */
     protected $bot = null;
-    
+
     /**
      * Contains the arugments
      * @var array
      */
     protected $args = null;
-    
+
     /**
      * Contains the nick/host/username of the user who issued the command.
-     * 
+     *
      * @var string
      */
     protected $privSource = null;
-    
+
     /**
      * Contains channel or user name
      *
      * @var string
      */
     protected $source = null;
-    
+
     /**
      * Original request from server
      *
      * @var string
      */
     protected $data;
-    
+
     /**
      * Contains all given arguments.
-     * 
+     *
      * @var array
      */
     protected $arguments = array ();
-    
+
     /**
      * Set's the IRC Connection, so we can use it to send data to the server.
-     * 
-     * @param \Library\IRC\Connection $ircConnection            
+     *
+     * @param \Library\IRC\Connection $ircConnection
      * @author Daniel Siepmann <daniel.siepmann@me.com>
      */
     public function setIRCConnection(\Library\IRC\Connection $ircConnection ) {
         $this->connection = $ircConnection;
         return $this;
     }
-    
+
     /**
      * Set's the IRC Bot, so we can use it to send data to the server.
-     * 
-     * @param \Library\IRC\Bot $bot            
+     *
+     * @param \Library\IRC\Bot $bot
      * @author Daniel Siepmann <daniel.siepmann@me.com>
      */
     public function setIRCBot(\Library\IRC\Bot $bot ) {
         $this->bot = $bot;
         return $this;
     }
-    
+
     /**
      * Set the arguments for the current message
      * This will also populate some fields
-     * 
+     *
      * @param array $args
      * @return \Library\IRC\Base
      * @author Hoshang Sadiq <superaktieboy@gmail.com>
@@ -110,21 +110,21 @@ abstract class Base {
         $this->source = substr( trim( \Library\FunctionCollection::removeLineBreaks( $args[2] ) ), 0 );
         $this->command = isset($args[3]) ? substr( trim( \Library\FunctionCollection::removeLineBreaks( $args[3] ) ), 1 ) : '';
         $this->arguments = count( $args ) > 4 ? array_slice( $args, 4 ) : array ();
-        
+
         $this->args = $args;
         return $this;
     }
-    
+
     /**
      * Returns parsed args of
-     * 
-     * @param string $data            
+     *
+     * @param string $data
      * @return stdClass
      * @author Hoshang Sadiq <superaktieboy@gmail.com>
      */
     protected function getInfo() {
         $args = $this->args;
-        
+
         /*
          * Strip leading colons off messages (that are meant to be seen by IRC only), only look at
          * the first three elements to avoid cutting off a user who starts an argument with a colon.
@@ -135,7 +135,7 @@ abstract class Base {
          */
         for ( $i = 0; $i <= ( ( ( sizeof( $args ) - 1 ) < 3 ) ? ( sizeof( $args ) - 1 ) : 3 ); $i++ )
             $args[$i] = ( strpos( $args[$i], ":" ) === 0 ) ? substr( $args[$i], 1 ) : $args[$i];
-        
+
         $args = array_map( function ( $value ) {
             return trim( \Library\FunctionCollection::removeLineBreaks( $value ) );
         }, $args );
@@ -153,7 +153,7 @@ abstract class Base {
                 'arguments' => $msg
         );
     }
-    
+
     /**
      * Get the user nickname
      * @param string $user
@@ -162,11 +162,11 @@ abstract class Base {
      */
     private function getUserNickName( $user ) {
         $result = preg_match( '/([a-zA-Z0-9_]+)!/', $user, $matches );
-        
+
         if ( $result !== false ) {
             return $matches[1];
         }
-        
+
         return false;
     }
 
@@ -201,25 +201,25 @@ abstract class Base {
     /**
      * Sends PRIVMSG to source with $msg
      *
-     * @param string $msg            
+     * @param string $msg
      * @author Daniel Siepmann <daniel.siepmann@me.com>
      * @author Hoshang Sadiq <superaktieboy@gmail.com>
      */
     protected function say( $msg, $source = 'default' ) {
         // If the message was a private one then forward back
         // to the messaging user rather than ourself!
-        $toNick = ( $this->source == $this->bot->getNick() ) ? $this->getInfo()->nick : $this->source; 
-        
+        $toNick = ( $this->source == $this->bot->getNick() ) ? $this->getInfo()->nick : $this->source;
+
         $toNick = ( $source == 'default' ) ? $toNick : $source;
-        
+
         $this->connection->sendData( 'PRIVMSG ' . $toNick . ' :' . $msg );
         return $this;
     }
-    
+
     /**
      * Fetches data from $uri
      *
-     * @param string $uri            
+     * @param string $uri
      * @return string
      * @author Daniel Siepmann <daniel.siepmann@me.com>
      */

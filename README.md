@@ -1,11 +1,12 @@
-# WildBot - IRC Bot
+# Daftbot - A PHP 5 Litecoin IRC bot (Dafter)
 A IRC Bot built in PHP (using sockets) with OOP. Designed to run off a local LAMP, WAMP, or MAMP stack.
 Includes a custom [Upstart](http://upstart.ubuntu.com/) script to run as Linux daemon.
 
 Web
 -------
-* Official Website: [http://wildphp.com](http://wildphp.com), Source Code: [Github](https://github.com/pogosheep/IRC-Bot)
-* Major Contributors: [Super3](http://super3.org), [Pogosheep](http://layne-obserdia.de), [Matejvelikonja](http://velikonja.si)
+* Official Website: [http://daftpool.com](http://daftpool.com), Source Code: [Github](https://github.com/dafter/daftbot)
+* Original Source Contributors (thanks!): [Super3](http://super3.org), [Pogosheep](http://layne-obserdia.de), [Matejvelikonja](http://velikonja.si), [ElvenSpellmaker](https://github.com/ElvenSpellmaker/)
+
 
 ## Features and Functions
 
@@ -18,7 +19,6 @@ Web
 * !timeout [seconds] - Bot leaves for the specified number of seconds.
 * !restart - Quits and restarts the script.
 * !quit - Quits and stops the script.
-* /msg [botname] !admin [password] - Identify as the admin. 
 
 ### Entended Commands
 
@@ -30,7 +30,6 @@ Web
 
 
 ### Listeners
-
 
 * Joins - Greets users when they join the channel.
 
@@ -50,29 +49,33 @@ Copy configuration file and customize its content.
 
 Copy Upstart script to folder and make appropriate changes.
 
-    sudo cp bin/wildbot.conf /etc/init/
+    sudo cp bin/daftbot.conf /etc/init/
 
 ### Run
 
 Run as PHP
 
-    php wildbot.php
+    php daftbot.php
 
 or Upstart service
 
-    start wildbot
+    start daftbot
 
 Restart
 
-    restart wildbot
+    restart phpbot404
 
 Stop
 
-    stop wildbot
+    stop phpbot404
 
-Sample Usage and Output
--------
-    <random-user> !say #wildbot hello there
-    <wildbot> hello there
-    <random-user> !poke #wildbot random-user
-    * wildbot pokes random-user
+### Sample Usage and Output
+
+    <random-user> !say #daftbot hello there
+    <daftbot> hello there
+    <random-user> !poke #daftbot random-user
+    * daftbot pokes random-user
+
+### Community
+
+IRC: [#daftbot@freenode.net](http://webchat.freenode.net/?channels=daftbot)

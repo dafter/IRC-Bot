@@ -10,7 +10,7 @@
      *
      * @license    http://creativecommons.org/licenses/by/3.0/
      *
-     * @package WildBot
+     * @package Wildbot
      * @subpackage Library
      * @author Jack Blower <Jack@elevnspellmaker.co.uk
      *
@@ -25,28 +25,28 @@
     /**
      * Description of SayRedirection
      *
-     * @package WildBot
+     * @package Daftbot
      * @subpackage Library
      * @author Jack Blower <Jack@elvenspellmaker.co.uk>
      */
     class SayRedirector {
         protected $bot;
         protected $limit = 3; // If someone tries to get the bot to say more than limit things it will redirect the messages to the person who asked the question rather than the channel they are in.
-        
+
         protected $person =  "";
         protected $channel = "";
-        
+
         protected $messageBuffer = array();
-        
+
         function __construct(\Library\IRC\Bot $bot) { $this->bot = $bot; }
 
         public function start( $person, $channel ) {
             $this->person = $person;
             $this->channel = $channel;
         }
-        
+
         public function say($message) { $this->messageBuffer[] = $message; }
-        
+
         public function shunt() {
             if( count($this->messageBuffer) > $this->limit )
             {
@@ -55,28 +55,28 @@
             }
             else
                 $this->sendToBot($this->channel, $this->messageBuffer);
-            
+
             // Reset all variables! //
             $this->person = "";
             $this->channel = "";
             $this->messageBuffer = array();
             //////////////////////////
         }
-        
+
         /**
-         * Sends PRIVMSG to toNick whether it's a channel or a 
+         * Sends PRIVMSG to toNick whether it's a channel or a
          *
          * @param string $toNick
          */
         protected function sendToBot($toNick, $messages) {
             $toNick = ($toNick == $this->bot->getNick()) ? $this->person : $toNick;
             $beginningMsg = 'PRIVMSG '. $toNick .' :';
-        
+
             if(strpos($toNick, '#') === FALSE)
                 $this->bot->getConnection()->sendData(
-                    $beginningMsg .'These messages originate from '. $this->channel 
+                    $beginningMsg .'These messages originate from '. $this->channel
                 );
-            
+
             foreach( $messages as $msg )
             {
                 $this->bot->getConnection()->sendData(
