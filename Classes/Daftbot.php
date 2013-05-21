@@ -45,7 +45,7 @@ class daftbot {
     public static function init() {
         require_once ( 'Autoloader.php' );
         spl_autoload_register( 'Autoloader::load' );
-        date_default_timezone_set( 'Europe/London' );
+        date_default_timezone_set( 'Europe/Amsterdam' );
 
         self::$bot = new Library\IRC\Bot();
         self::configure();
