@@ -1,0 +1,29 @@
+From 15ec9b06c4203e6844ff83064fa0b937997b03a6 Mon Sep 17 00:00:00 2001
+From: Tristan van Bokkem <tristanvanbokkem@gmail.com>
+Date: Tue, 21 May 2013 17:28:14 +0200
+Subject: [PATCH] Configuring CNAME
+
+---
+ .gitignore | 1 +
+ CNAME      | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 .gitignore
+ create mode 100644 CNAME
+
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..529bf01
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1 @@
++config.local.php
+diff --git a/CNAME b/CNAME
+new file mode 100644
+index 0000000..4c830c4
+--- /dev/null
++++ b/CNAME
+@@ -0,0 +1 @@
++daftbot.daftpool.com
+-- 
+1.7.11.1
+
